@@ -1,8 +1,10 @@
 import bcryptjs from "bcryptjs";
+import { randomBytes } from "crypto";
 import { NextFunction, Request, Response } from "express";
 import { User } from "../models/user.model";
 import { UserType } from "../types/user.type";
 import { genrateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie";
+import { sentVerificationEmail } from "../utils/sentVerificationEmail";
 
 export const signup = async (
   req: Request,
@@ -29,6 +31,8 @@ export const signup = async (
     ).toString();
 
     const verificationTokenExpiresAt = Date.now() + 24 * 60 * 60 * 1000;
+
+    sentVerificationEmail({ email, name, code: verificationToken });
 
     const hashPassword = await bcryptjs.hash(password, 10);
 
@@ -159,6 +163,34 @@ export const verifyEmail = async (
         password: undefined,
       },
     });
+  } catch (err) {
+    const error = err as Error;
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+export const forgotPassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { email } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      throw new Error("User not found.");
+    }
+
+    const randomToken = randomBytes(20).toString("hex");
+    const resetTokenExpiresAt = new Date(Date.now() + 1 * 60 * 60 * 1000); // 1hr
+
+    user.resetPasswordToken = randomToken;
+    user.resetPasswordExpiresAt = resetTokenExpiresAt;
   } catch (err) {
     const error = err as Error;
     res.status(500).json({

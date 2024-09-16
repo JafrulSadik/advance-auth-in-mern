@@ -15,18 +15,26 @@ const sender = {
   address: SENDER,
   name: "Auth Test",
 };
-const recipients = ["misuk.sarker100@gmail.com"];
 
-const sendMail = async (message: string, subject: string) => {
+interface Props {
+  subject: string;
+  template: string;
+  email: string;
+}
+
+const sendMail = async (props: Props) => {
+  const { subject, template, email } = props;
+  const recipients = [email];
   try {
-    const info = await transport.sendMail({
+    await transport.sendMail({
       from: sender,
       to: recipients,
       subject: subject,
-      text: "Congrats for sending test email with Mailtrap!",
-      category: "Integration Test",
+      html: template,
     });
-  } catch (error) {
+  } catch (err) {
+    const error = err as Error;
+    throw new Error(error.message);
     throw new Error("Email sending unsuccessfull!");
   }
 };
