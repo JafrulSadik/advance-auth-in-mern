@@ -5,8 +5,8 @@ export type UserType = {
   name: string;
   lastLogin: Date;
   isVerified: boolean;
-  resetPasswordToken: string;
-  resetPasswordExpiresAt: Date;
+  resetPasswordToken: string | undefined;
+  resetPasswordExpiresAt: Date | undefined;
   verificationToken: string | undefined;
   verificationTokenExpiresAt: Date | undefined;
 };

@@ -1,22 +1,22 @@
 import sendMail from "../config/nodemailer";
 import {
-  verifyEmailSubject,
-  verifyEmailTemplate,
+  resetPasswordEmailSubject,
+  resetPasswordEmailTemplate,
 } from "./verifyEmailTemplates";
 
 interface Props {
   name: string;
   email: string;
-  code: string;
+  resetLink: string;
 }
 
-export const sentVerificationEmail = async (props: Props) => {
-  const { name, email, code } = props;
+export const sentResetPassword = async (props: Props) => {
+  const { name, email, resetLink } = props;
   try {
-    const template = verifyEmailTemplate(name, code);
+    const template = resetPasswordEmailTemplate(name, resetLink);
 
     await sendMail({
-      subject: verifyEmailSubject,
+      subject: resetPasswordEmailSubject,
       template: template,
       email,
     });
