@@ -10,6 +10,7 @@ const config = {
   env: process.env.ENV,
   mailtrapToken: process.env.MAILTRAP_TOKEN,
   mailtrapSender: process.env.MAILTRAP_SENDER,
+  clientBaseUrl: process.env.CLIENT_BASE_URL,
 };
 
 export default Object.freeze(config);
