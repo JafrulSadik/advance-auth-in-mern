@@ -2,6 +2,7 @@ import bcryptjs from "bcryptjs";
 import { randomBytes } from "crypto";
 import { NextFunction, Request, Response } from "express";
 import config from "../config/config";
+import { AuthRequest } from "../middleware/verifyToken";
 import { User } from "../models/user.model";
 import { UserType } from "../types/user.type";
 import { genrateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie";
@@ -245,6 +246,36 @@ export const resetPassword = async (
     res.status(200).json({
       success: true,
       message: "Reset password successfully.",
+    });
+  } catch (err) {
+    const error = err as Error;
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+export const checkAuth = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const userId = req.userId;
+  try {
+    const user = await User.findById(userId).select("-password");
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found.",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Data retrive successfully.",
+      data: user,
     });
   } catch (err) {
     const error = err as Error;
