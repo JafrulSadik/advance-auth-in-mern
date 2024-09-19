@@ -181,6 +181,7 @@ export const forgotPassword = async (
   next: NextFunction
 ) => {
   const { email } = req.body;
+
   try {
     const user = await User.findOne({ email });
 

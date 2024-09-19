@@ -35,7 +35,6 @@ const sendMail = async (props: Props) => {
   } catch (err) {
     const error = err as Error;
     throw new Error(error.message);
-    throw new Error("Email sending unsuccessfull!");
   }
 };
 
